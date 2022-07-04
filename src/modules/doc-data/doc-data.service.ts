@@ -6,15 +6,13 @@ import { DocDataRepository } from './doc-data.repository';
 
 @Injectable()
 export class DocDataService {
-  public static MAX_PEOPLE = 5;
-
   constructor(private readonly docDataRepository: DocDataRepository) {}
 
-  public getSingle(): Promise<DocSession> {
+  public getSingle(): Promise<DocSession | undefined> {
     return this.docDataRepository.getSingle();
   }
 
-  public async initializeSession(): Promise<DocSession> {
+  public async initializeSession(): Promise<DocSession | undefined> {
     const newDocSession = new DocSession({
       content: null,
       users: [],
@@ -26,12 +24,14 @@ export class DocDataService {
     return this.getSingle();
   }
 
-  public async addUserToSession(user: User): Promise<DocSession> {
+  public async addUserToSession(user: User): Promise<DocSession | undefined> {
     const docSession = await this.getSingle();
 
-    docSession.users = [...docSession.users, user];
+    if (docSession) {
+      docSession.users = [...docSession.users, user];
 
-    await this.docDataRepository.updateSingle(docSession);
+      await this.docDataRepository.updateSingle(docSession);
+    }
 
     return this.getSingle();
   }

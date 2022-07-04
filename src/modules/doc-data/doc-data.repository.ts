@@ -8,7 +8,7 @@ import { DocSession } from 'src/models/entities/doc-session';
 export class DocDataRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
 
-  public getSingle(): Promise<DocSession> {
+  public getSingle() {
     return this.cacheManager.get<DocSession>(environment.redisSingleKey);
   }
 

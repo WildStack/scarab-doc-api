@@ -1,31 +1,32 @@
 import { Injectable } from '@nestjs/common';
 import { DocSession } from 'src/models/entities/doc-session';
 import { User } from 'src/models/entities/user';
-import { DocDataRepository } from '../doc-data/doc-data.repository';
-
-interface IsSessionOpenProps {
-  isFull: boolean;
-  docSession: DocSession | null;
-}
+import { DocDataService } from '../doc-data/doc-data.service';
 
 @Injectable()
 export class AuthService {
-  // public static MAX_PEOPLE = 5;
-  // constructor(private readonly docDataRepository: DocDataRepository) {}
-  // public async getAll(): Promise<any> {
-  //   return this.docDataRepository.getAll();
-  // }
-  // public async isSessionOpen(uuid: string): Promise<IsSessionOpenProps> {
-  //   const docSession = await this.docDataRepository.getDocSession(uuid);
-  //   if (docSession) {
-  //     return {
-  //       isFull: docSession.users.length >= AuthService.MAX_PEOPLE,
-  //       docSession,
-  //     };
-  //   }
-  //   return { isFull: false, docSession: null };
-  // }
-  // public async openSession(user: User) {
-  //   return this.docDataRepository.createSession(user);
-  // }
+  public static MAX_PEOPLE = 5;
+
+  constructor(private readonly docDataService: DocDataService) {}
+
+  public async checkOrCreateDocSession(): Promise<DocSession | undefined> {
+    let docSession = await this.docDataService.getSingle();
+
+    if (!docSession) {
+      docSession = await this.docDataService.initializeSession();
+    }
+
+    return docSession;
+  }
+
+  public getUser(
+    docSession: DocSession | undefined,
+    userName: string,
+  ): User | null {
+    return docSession?.users.find((el) => el.username === userName) || null;
+  }
+
+  public checkLimit(docSession: DocSession | undefined) {
+    return (docSession?.users.length ?? 0) >= AuthService.MAX_PEOPLE;
+  }
 }
