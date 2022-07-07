@@ -5,20 +5,31 @@ import {
   ConnectedSocket,
   OnGatewayConnection,
   OnGatewayDisconnect,
+  OnGatewayInit,
+  SubscribeMessage,
+  MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { consts } from 'src/common/constants';
-import { DocSession } from 'src/models/entities/doc-session';
+import { environment } from 'src/enviroment';
 import { User } from 'src/models/entities/user';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { SocketGuard } from 'src/security/socket.guard';
+import { SocketService } from './socket.service';
 
 @UseGuards(SocketGuard)
 @WebSocketGateway({ transports: ['websocket'] })
-export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, OnGatewayInit {
   @WebSocketServer() public wss: Server;
 
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly socketService: SocketService,
+  ) {}
+
+  afterInit(server: Server) {
+    this.socketService.server = server;
+  }
 
   public async handleConnection(@ConnectedSocket() client: Socket) {
     const uuid = client.handshake.auth.uuid as string; // validated in socket guard
@@ -27,6 +38,9 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const newUser = await this.authService.getUserByUUID(uuid);
 
     if (!newUser) return;
+
+    // for other methods
+    // client.join(environment.redisSingleKey);
 
     client.broadcast.emit(consts.socketEvents.userAdded, newUser);
 
@@ -49,6 +63,22 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     console.log('disconnected, uuid: ' + uuid);
 
     return uuid;
+  }
+
+  @SubscribeMessage('distribute_change')
+  public async handleDistributeChange(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() content: string,
+  ) {
+    socket.broadcast.emit(consts.socketEvents.notifyUpdate, content);
+  }
+
+  @SubscribeMessage('distribute_caret')
+  public async handleDistributeCaret(
+    @ConnectedSocket() socket: Socket,
+    @MessageBody() content: { top: number; left: number; uuid: string },
+  ) {
+    socket.broadcast.emit(consts.socketEvents.notifyUpdateCaret, content);
   }
 }
 

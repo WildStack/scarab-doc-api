@@ -1,11 +1,19 @@
+import { Server } from 'socket.io';
 import { Injectable } from '@nestjs/common';
-import { SocketGateway } from './socket.gateway';
 
 @Injectable()
 export class SocketService {
-  constructor(private readonly socketGateway: SocketGateway) {}
+  private _server: Server;
 
-  sendMessageToUser(socketId: string, namespace: string, value: any) {
-    this.socketGateway.wss.sockets.to(socketId).emit(namespace, value);
+  public get server(): Server {
+    return this._server;
   }
+
+  public set server(value: Server) {
+    this._server = value;
+  }
+
+  // sendMessageToUser(socketId: string, namespace: string, value: any) {
+  //   this._server.sockets.to(socketId).emit(namespace, value);
+  // }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import { DocDataDtoNotify } from 'src/models/dto/doc-data.dto';
 import { DocSession } from 'src/models/entities/doc-session';
 import { User } from 'src/models/entities/user';
 import { v4 as uuid } from 'uuid';
@@ -51,5 +52,29 @@ export class DocDataService {
 
   public deleteSession(): Promise<any> {
     return this.docDataRepository.deleteSingle();
+  }
+
+  public async updateSessionContent(docDataDtoNotify: DocDataDtoNotify) {
+    const docSession = await this.getSingle();
+
+    if (docSession) {
+      docSession.content = docDataDtoNotify.content;
+
+      const userIndex = docSession.users.findIndex((el) => el.uuid === docDataDtoNotify.uuid);
+
+      // update user position
+      if (userIndex !== -1) {
+        const user = docSession.users[userIndex];
+        user.top = docDataDtoNotify.top;
+        user.left = docDataDtoNotify.left;
+
+        // update
+        docSession.users[userIndex] = user;
+      }
+
+      return this.docDataRepository.updateSingle(docSession);
+    }
+
+    return null;
   }
 }
