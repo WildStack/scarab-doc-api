@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
+import { uuidRegex } from 'src/common/constants';
 
 @Injectable()
 export class SocketGuard implements CanActivate {
@@ -11,7 +12,9 @@ export class SocketGuard implements CanActivate {
       throw new WsException('uuid is missing');
     }
 
-    //TODO validate uuid
+    if (!uuidRegex.test(uuid)) {
+      throw new WsException('invalid uuid');
+    }
 
     return true;
   }

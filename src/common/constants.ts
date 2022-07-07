@@ -6,3 +6,7 @@ export const consts = {
     notifyUpdateCaret: 'notify_update_caret',
   },
 };
+
+export const uuidRegex = new RegExp(
+  /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/,
+);

@@ -1,4 +1,4 @@
-import { plainToInstance, Transform, Type } from 'class-transformer';
+import { plainToInstance, Transform } from 'class-transformer';
 import { User } from './user';
 
 export interface DocSessionProps {
@@ -13,10 +13,4 @@ export class DocSession implements DocSessionProps {
 
   public content: any;
   public uuid: string;
-
-  // constructor(props: DocSessionProps) {
-  //   this.users = props.users;
-  //   this.content = props.content;
-  //   this.uuid = props.uuid;
-  // }
 }

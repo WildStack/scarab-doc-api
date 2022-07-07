@@ -7,9 +7,7 @@ import { DocDataService } from '../doc-data/doc-data.service';
 export class AuthService {
   public static MAX_PEOPLE = 5;
 
-  constructor(
-    private readonly docDataService: DocDataService, // private readonly socketService: SocketService,
-  ) {}
+  constructor(private readonly docDataService: DocDataService) {}
 
   public async checkOrCreateDocSession(): Promise<DocSession | undefined> {
     let docSession = await this.docDataService.getSingle();
@@ -59,9 +57,5 @@ export class AuthService {
 
     // remove user and update session and return new one
     return this.docDataService.removeUserFromSessions(uuid);
-  }
-
-  public removeAndUpdate(shouldDistribute: DocSession) {
-    // remove user and update session and return new one
   }
 }
