@@ -1,16 +1,11 @@
-import {
-  BadRequestException,
-  Body,
-  Controller,
-  Post,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, UnauthorizedException } from '@nestjs/common';
 import { v4 as uuid } from 'uuid';
 import { User } from 'src/models/entities/user';
 import { AuthCheckDto } from 'src/models/dto/auth-check.dto';
 import { DocDataService } from '../doc-data/doc-data.service';
 import { getRandomLightColorRgb } from 'src/common/common';
 import { AuthService } from './auth.service';
+import { DocSession } from 'src/models/entities/doc-session';
 
 @Controller('auth')
 export class AuthController {
@@ -20,12 +15,14 @@ export class AuthController {
   ) {}
 
   @Post()
-  public async check(@Body() authCheckDto: AuthCheckDto) {
+  public async check(
+    @Body() authCheckDto: AuthCheckDto,
+  ): Promise<{ docState: DocSession | undefined; user: User }> {
     // check doc session
     const docSession = await this.authService.checkOrCreateDocSession();
 
     // check if user exists in this session
-    let user = this.authService.getUser(docSession, authCheckDto.username);
+    let user = this.authService.getUserBySession(docSession, authCheckDto.username);
 
     if (user) {
       throw new BadRequestException('user already exists');
@@ -36,15 +33,17 @@ export class AuthController {
     }
 
     if (!user) {
-      user = new User({
-        username: authCheckDto.username,
-        color: getRandomLightColorRgb(),
-        uuid: uuid(),
-      });
+      user = new User();
+      user.username = authCheckDto.username;
+      user.color = getRandomLightColorRgb();
+      user.uuid = uuid();
 
       await this.docDataService.addUserToSession(user);
     }
 
-    return user;
+    // get updated session
+    const docState = await this.docDataService.getSingle();
+
+    return { docState, user };
   }
 }

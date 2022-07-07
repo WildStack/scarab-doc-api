@@ -7,7 +7,9 @@ import { DocDataService } from '../doc-data/doc-data.service';
 export class AuthService {
   public static MAX_PEOPLE = 5;
 
-  constructor(private readonly docDataService: DocDataService) {}
+  constructor(
+    private readonly docDataService: DocDataService, // private readonly socketService: SocketService,
+  ) {}
 
   public async checkOrCreateDocSession(): Promise<DocSession | undefined> {
     let docSession = await this.docDataService.getSingle();
@@ -19,14 +21,47 @@ export class AuthService {
     return docSession;
   }
 
-  public getUser(
-    docSession: DocSession | undefined,
-    userName: string,
-  ): User | null {
+  public async getUserByUUID(uuid): Promise<User | null> {
+    const docSession = await this.docDataService.getSingle();
+
+    if (docSession) {
+      return docSession.users.find((el) => el.uuid === uuid) || null;
+    }
+
+    return null;
+  }
+
+  public getUserBySession(docSession: DocSession | undefined, userName: string): User | null {
     return docSession?.users.find((el) => el.username === userName) || null;
   }
 
   public checkLimit(docSession: DocSession | undefined) {
     return (docSession?.users.length ?? 0) >= AuthService.MAX_PEOPLE;
+  }
+
+  public async deleteOrUpdateIfLastSession(uuid: string): Promise<boolean | undefined | User> {
+    const docSession = await this.docDataService.getSingle();
+
+    if (!docSession) {
+      return false;
+    }
+
+    // if user not in docsession
+    if (!docSession.users.some((el) => el.uuid === uuid)) {
+      return false;
+    }
+
+    // if user in docsession and last one
+    if (docSession.users.length <= 1) {
+      await this.docDataService.deleteSession();
+      return false;
+    }
+
+    // remove user and update session and return new one
+    return this.docDataService.removeUserFromSessions(uuid);
+  }
+
+  public removeAndUpdate(shouldDistribute: DocSession) {
+    // remove user and update session and return new one
   }
 }

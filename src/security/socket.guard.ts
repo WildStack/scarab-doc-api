@@ -11,6 +11,8 @@ export class SocketGuard implements CanActivate {
       throw new WsException('uuid is missing');
     }
 
+    //TODO validate uuid
+
     return true;
   }
 }

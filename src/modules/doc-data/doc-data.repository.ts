@@ -1,5 +1,6 @@
 import { CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Cache } from 'cache-manager';
+import { plainToInstance } from 'class-transformer';
 import { environment } from 'src/enviroment';
 import { DocSession } from 'src/models/entities/doc-session';
 
@@ -8,8 +9,9 @@ import { DocSession } from 'src/models/entities/doc-session';
 export class DocDataRepository {
   constructor(@Inject(CACHE_MANAGER) private readonly cacheManager: Cache) {}
 
-  public getSingle() {
-    return this.cacheManager.get<DocSession>(environment.redisSingleKey);
+  public async getSingle(): Promise<DocSession> {
+    const data = await this.cacheManager.get<DocSession>(environment.redisSingleKey);
+    return plainToInstance(DocSession, data);
   }
 
   public createSingle(newDocSession: DocSession): Promise<any> {
