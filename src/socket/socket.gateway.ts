@@ -11,7 +11,6 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { consts } from 'src/common/constants';
-import { environment } from 'src/enviroment';
 import { User } from 'src/models/entities/user';
 import { AuthService } from 'src/modules/auth/auth.service';
 import { SocketGuard } from 'src/security/socket.guard';
@@ -39,12 +38,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
 
     if (!newUser) return;
 
-    // for other methods
-    // client.join(environment.redisSingleKey);
-
     client.broadcast.emit(consts.socketEvents.userAdded, newUser);
-
-    console.log('connected, uuid: ' + uuid);
 
     return uuid;
   }
@@ -59,8 +53,6 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     if (shouldDistribute && shouldDistribute instanceof User) {
       client.broadcast.emit(consts.socketEvents.userRemoved, shouldDistribute);
     }
-
-    console.log('disconnected, uuid: ' + uuid);
 
     return uuid;
   }
@@ -81,19 +73,3 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
     socket.broadcast.emit(consts.socketEvents.notifyUpdateCaret, content);
   }
 }
-
-// @SubscribeMessage('connect')
-// public async handleDuoConnect(@ConnectedSocket() socket: Socket) {
-//   const { id, socket_id } = this.userService.userSocketPayload(socket);
-//   const user = await this.userService.userSpamAndDetails(id);
-//   console.log('joined' + socket_id);
-//   // join to user specific id
-//   socket.join(socket_id);
-//   // update online status
-//   this.userService.updateOnlineStatus(user.id, true);
-//   // send found user and if anyone matched
-//   return await this.duoFinderService.initFirstMatch(user);
-//   this.wss.sockets
-//     .to(prevFound.socket_id)
-//     .emit('duo_match_finder', JSON.parse(serialize(foundAnyone))); // send to user
-// }

@@ -66,7 +66,7 @@ export class DocDataService {
       if (userIndex !== -1) {
         const user = docSession.users[userIndex];
         user.top = docDataDtoNotify.top;
-        user.left = docDataDtoNotify.left;
+        user.currentLineText = docDataDtoNotify.currentLineText;
 
         // update
         docSession.users[userIndex] = user;

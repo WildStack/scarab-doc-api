@@ -38,7 +38,7 @@ export class AuthController {
       user.color = getRandomLightColorRgb();
       user.uuid = uuid();
       user.top = 0;
-      user.left = 0;
+      user.currentLineText = '';
 
       await this.docDataService.addUserToSession(user);
     }

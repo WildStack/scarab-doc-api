@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class DocDataDto {
   @IsNotEmpty()
@@ -18,7 +18,8 @@ export class DocDataDtoNotify {
   @IsNumber()
   top: number;
 
-  @IsNumber()
-  @IsNotEmpty()
-  left: number;
+  @IsOptional()
+  @IsString()
+  // @IsNotEmpty()
+  currentLineText: string;
 }

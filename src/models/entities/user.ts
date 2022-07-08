@@ -3,7 +3,7 @@ export interface UserProps {
   color: string;
   username: string;
   top: number;
-  left: number;
+  currentLineText: string;
 }
 
 export class User implements UserProps {
@@ -11,5 +11,5 @@ export class User implements UserProps {
   public color: string;
   public username: string;
   public top: number;
-  public left: number;
+  public currentLineText: string;
 }
