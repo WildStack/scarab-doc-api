@@ -60,7 +60,7 @@ export class SocketGateway implements OnGatewayConnection, OnGatewayDisconnect, 
   @SubscribeMessage('distribute_change')
   public async handleDistributeChange(
     @ConnectedSocket() socket: Socket,
-    @MessageBody() content: string,
+    @MessageBody() content: any,
   ) {
     socket.broadcast.emit(consts.socketEvents.notifyUpdate, content);
   }
