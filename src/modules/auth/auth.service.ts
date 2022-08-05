@@ -5,7 +5,7 @@ import { DocDataService } from '../doc-data/doc-data.service';
 
 @Injectable()
 export class AuthService {
-  public static MAX_PEOPLE = 5;
+  public static MAX_PEOPLE = 500;
 
   constructor(private readonly docDataService: DocDataService) {}
 
