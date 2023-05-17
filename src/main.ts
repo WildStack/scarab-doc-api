@@ -13,7 +13,7 @@ NestFactory.create<NestExpressApplication>(AppModule).then(async (app) => {
   });
 
   // globals
-  app.enableCors({ origin: true });
+  app.enableCors();
   app.setGlobalPrefix('/api');
   app.useGlobalPipes(glValidationPipe);
   app.set('trust proxy', 1);
