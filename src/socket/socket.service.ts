@@ -12,8 +12,4 @@ export class SocketService {
   public set server(value: Server) {
     this._server = value;
   }
-
-  // sendMessageToUser(socketId: string, namespace: string, value: any) {
-  //   this._server.sockets.to(socketId).emit(namespace, value);
-  // }
 }

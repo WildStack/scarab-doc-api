@@ -20,6 +20,5 @@ export class DocDataDtoNotify {
 
   @IsOptional()
   @IsString()
-  // @IsNotEmpty()
   currentLineText: string;
 }

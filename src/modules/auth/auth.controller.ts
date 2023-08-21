@@ -3,7 +3,7 @@ import { v4 as uuid } from 'uuid';
 import { User } from 'src/models/entities/user';
 import { AuthCheckDto } from 'src/models/dto/auth-check.dto';
 import { DocDataService } from '../doc-data/doc-data.service';
-import { getRandomLightColorRgb } from 'src/common/common';
+import { getRandomLightColorRgb } from 'src/common/helper';
 import { AuthService } from './auth.service';
 import { DocSession } from 'src/models/entities/doc-session';
 
