@@ -1,0 +1,31 @@
+version: '3'
+
+volumes:
+  local_redis_data:
+  local_redis_conf:
+
+services:
+  beastz:
+    build: ./
+    ports:
+      - '4001:4000'
+    environment:
+      PORT: ${PORT}
+      NODE_ENV: ${NODE_ENV}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:latest
+    restart: always
+    ports:
+      - '6380:6379'
+    volumes:
+      - local_redis_data:/root/redis
+      - local_redis_conf:/usr/local/etc/redis/redis.conf
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 16

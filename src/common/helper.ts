@@ -9,3 +9,7 @@ export function getRandomLightColorRgb(): string {
     ')'
   );
 }
+
+export function cyanLog<T>(val: T): void {
+  console.log('\x1b[36m%s\x1b[0m', val);
+}
