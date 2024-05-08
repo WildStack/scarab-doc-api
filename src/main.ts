@@ -9,9 +9,6 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { cyanLog } from './common/helper';
 
 NestFactory.create<NestExpressApplication>(AppModule).then(async app => {
-  console.log('='.repeat(20));
-  console.log(environment);
-
   app.enableShutdownHooks();
   app.enableCors();
   app.setGlobalPrefix('/api');
