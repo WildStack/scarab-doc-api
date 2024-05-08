@@ -5,7 +5,7 @@ volumes:
   local_redis_conf:
 
 services:
-  beastz:
+  beastz-doc-api:
     build: ./
     ports:
       - '4001:4000'
