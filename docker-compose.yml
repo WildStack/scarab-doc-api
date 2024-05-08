@@ -13,7 +13,7 @@ services:
       PORT: ${PORT}
       NODE_ENV: ${NODE_ENV}
       REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: 6380
+      REDIS_PORT: 6379
       REDIS_PASSWORD: ${REDIS_PASSWORD}
     depends_on:
       - redis
